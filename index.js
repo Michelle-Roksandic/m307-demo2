@@ -17,6 +17,13 @@ app.get("/impressum", async function (req, res) {
   res.render("impressum", {});
 });
 
+app.get("/feed", async function (req, res) {
+  res.render("feed", {});
+});
+
+app.get("/user", async function (req, res) {
+  res.render("user", {});
+});
 /* Wichtig! Diese Zeilen müssen immer am Schluss der Website stehen! */
 app.listen(3010, () => {
   console.log(`Example app listening at http://localhost:3010`);
