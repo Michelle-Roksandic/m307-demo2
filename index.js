@@ -17,6 +17,11 @@ app.get("/impressum", async function (req, res) {
   res.render("impressum", {});
 });
 
+app.get("/feed", async function (req, res) {
+  const posts = await app.locals.pool.query("SELECT * FROM posts");
+  res.render("feed", { posts: posts.rows });
+});
+
 app.get("/", async function (req, res) {
   const posts = await app.locals.pool.query("SELECT * FROM posts");
   res.render("start", { posts: posts.rows });
@@ -51,7 +56,7 @@ app.post("/create_post", async function (req, res) {
       (req.body.title, req.body.content, req.session.userid)
     ]
   );
-  res.direct("/feed");
+  res.redirect("/");
 });
 
 /* Wichtig! Diese Zeilen müssen immer am Schluss der Website stehen! */

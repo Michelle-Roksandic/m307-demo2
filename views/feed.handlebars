@@ -1,6 +1,17 @@
-{{#posts}}
-  <hr />
-  <h3>{{post_title}}</h3>
-  <h3>{{description}}</h3>
-  <a href="/post/{{id}}">Details</a>
-{{/posts}}
+<section class="feed">
+
+  {{#posts}}
+    <div class="posts">
+      <h3>{{post_title}}</h3>
+      <h3>{{description}}</h3>
+      <a class="feed-details" href="/post/{{id}}">Details</a>
+    </div>
+  {{/posts}}
+
+</section>
+
+<form action="/like/{{id}}" enctype="multipart/form-data" method="POST">
+  <input type="image" src="/like.png" />
+</form>
+
+<p>{{likes.count}} Likes</p>
