@@ -25,7 +25,10 @@ export function createApp(dbconfig) {
     sessions({
       secret: "thisismysecrctekeyfhrgfgrfrty84fwir767",
       saveUninitialized: true,
-      cookie: { maxAge: 86400000, secure: false },
+      cookie: {
+        maxAge: 86400000,
+        secure: true,
+      },
       resave: false,
     })
   );
@@ -65,6 +68,7 @@ export function createApp(dbconfig) {
           //TODO: This code does not work. Session attributes are lost on other routes
           req.session.userid = result.rows[0].id;
           req.session.username = result.rows[0].username;
+          console.log(req.session.userid, req.session.username);
           res.redirect("/feed");
         } else {
           res.redirect("/login");

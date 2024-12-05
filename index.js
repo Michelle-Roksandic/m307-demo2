@@ -36,7 +36,7 @@ app.get("/post/:id", async function (req, res) {
 
 app.get("/user", async function (req, res) {
   //TODO: set username from session once setting on session works
-
+  console.log(req.session.userid, req.session.username);
   res.render("user", { user: { username: "testuser" } });
 });
 
