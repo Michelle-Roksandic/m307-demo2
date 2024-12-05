@@ -62,7 +62,9 @@ export function createApp(dbconfig) {
           console.log(error);
         }
         if (bcrypt.compareSync(req.body.password, result.rows[0].password)) {
+          //TODO: This code does not work. Session attributes are lost on other routes
           req.session.userid = result.rows[0].id;
+          req.session.username = result.rows[0].username;
           res.redirect("/feed");
         } else {
           res.redirect("/login");

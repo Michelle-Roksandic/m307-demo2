@@ -1,5 +1,5 @@
 import { createApp } from "./config.js";
-
+import bcrypt from "bcrypt";
 const app = createApp({
   user: "wandering_water_3730",
   host: "bbz.cloud",
@@ -35,14 +35,38 @@ app.get("/post/:id", async function (req, res) {
 });
 
 app.get("/user", async function (req, res) {
-  const posts = await app.locals.pool.query(
-    "SELECT * FROM posts WHERE user_id = $1",
-    [req.session.userid]
+  //TODO: set username from session once setting on session works
+
+  res.render("user", { user: { username: "testuser" } });
+});
+
+app.post("/user", async function (req, res) {
+  const result = await app.locals.pool.query(
+    "SELECT * FROM users WHERE id = $1",
+    [4]
   );
-  res.render("user", { posts: posts.rows });
+  if (bcrypt.compareSync(req.body.oldPassword, result.rows[0].password)) {
+    console.log("MATCHED, changing password...");
+    var password = bcrypt.hashSync(req.body.newPassword, 10);
+    //TODO: Change id 4 to logged in userid, once req.session.userid works
+    app.locals.pool.query(
+      "UPDATE users SET password = $1 WHERE id = $2",
+      [password, 4],
+      (error, result) => {
+        if (error) {
+          console.log(error);
+        }
+        console.log("SUCCESSFULLY changed password");
+        res.redirect("/login");
+      }
+    );
+  } else {
+    res.redirect("/user");
+  }
 });
 
 app.get("/new_post", async function (req, res) {
+  //TODO: comment this code in, once req.session.userid works
   // if (!req.session.userid) {
   //   res.redirect("/login");
   //   return;
@@ -52,9 +76,8 @@ app.get("/new_post", async function (req, res) {
 
 app.post("/create_post", async function (req, res) {
   await app.locals.pool.query(
-    "INSERT INTO posts (title, description, user_id, image, category) VALUES ($1, $2, $3, $4, $5)",[
-      req.body.title, req.body.content, 4, "", ""
-    ]
+    "INSERT INTO posts (title, description, user_id, image, category) VALUES ($1, $2, $3, $4, $5)",
+    [req.body.title, req.body.content, 4, "", ""]
   );
   res.redirect("/");
 });
