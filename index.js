@@ -43,17 +43,17 @@ app.get("/user", async function (req, res) {
 });
 
 app.get("/new_post", async function (req, res) {
-  if (!req.session.userid) {
-    res.redirect("/login");
-    return;
-  }
+  // if (!req.session.userid) {
+  //   res.redirect("/login");
+  //   return;
+  // }
   res.render("new_post", {});
 });
 
 app.post("/create_post", async function (req, res) {
   await app.locals.pool.query(
-    "INSERT INTO posts (title, content, user_id) VALUES ($1, $2, $3)"[
-      (req.body.title, req.body.content, req.session.userid)
+    "INSERT INTO posts (title, description, user_id, image, category) VALUES ($1, $2, $3, $4, $5)",[
+      req.body.title, req.body.content, 4, "", ""
     ]
   );
   res.redirect("/");

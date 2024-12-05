@@ -63,7 +63,7 @@ export function createApp(dbconfig) {
         }
         if (bcrypt.compareSync(req.body.password, result.rows[0].password)) {
           req.session.userid = result.rows[0].id;
-          res.redirect("/");
+          res.redirect("/feed");
         } else {
           res.redirect("/login");
         }
