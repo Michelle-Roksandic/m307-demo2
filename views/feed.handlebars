@@ -2,8 +2,9 @@
 
   {{#posts}}
     <div class="posts">
-      <h3>{{post_title}}</h3>
+      <h3>{{title}}</h3>
       <h3>{{description}}</h3>
+      <img src="/uploads/{{image}}" />
       <a class="feed-details" href="/post/{{id}}">Details</a>
     </div>
   {{/posts}}

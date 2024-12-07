@@ -27,7 +27,7 @@ export function createApp(dbconfig) {
       saveUninitialized: true,
       cookie: {
         maxAge: 86400000,
-        secure: true,
+        secure: false,
       },
       resave: false,
     })

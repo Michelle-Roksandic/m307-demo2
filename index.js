@@ -1,4 +1,4 @@
-import { createApp } from "./config.js";
+import { createApp, upload } from "./config.js";
 import bcrypt from "bcrypt";
 const app = createApp({
   user: "wandering_water_3730",
@@ -35,23 +35,20 @@ app.get("/post/:id", async function (req, res) {
 });
 
 app.get("/user", async function (req, res) {
-  //TODO: set username from session once setting on session works
-  console.log(req.session.userid, req.session.username);
-  res.render("user", { user: { username: "testuser" } });
+  res.render("user", { user: { username: req.session.username } });
 });
 
 app.post("/user", async function (req, res) {
   const result = await app.locals.pool.query(
     "SELECT * FROM users WHERE id = $1",
-    [4]
+    [req.session.userid]
   );
   if (bcrypt.compareSync(req.body.oldPassword, result.rows[0].password)) {
     console.log("MATCHED, changing password...");
     var password = bcrypt.hashSync(req.body.newPassword, 10);
-    //TODO: Change id 4 to logged in userid, once req.session.userid works
     app.locals.pool.query(
       "UPDATE users SET password = $1 WHERE id = $2",
-      [password, 4],
+      [password, req.session.userid],
       (error, result) => {
         if (error) {
           console.log(error);
@@ -66,20 +63,26 @@ app.post("/user", async function (req, res) {
 });
 
 app.get("/new_post", async function (req, res) {
-  //TODO: comment this code in, once req.session.userid works
-  // if (!req.session.userid) {
-  //   res.redirect("/login");
-  //   return;
-  // }
+  if (!req.session.userid) {
+    res.redirect("/login");
+    return;
+  }
   res.render("new_post", {});
 });
-
-app.post("/create_post", async function (req, res) {
+/* start=1, end=5 */
+app.post("/create_post", upload.single("image"), async function (req, res) {
+  console.log(req.file, req.files);
   await app.locals.pool.query(
     "INSERT INTO posts (title, description, user_id, image, category) VALUES ($1, $2, $3, $4, $5)",
-    [req.body.title, req.body.content, 4, "", ""]
+    [
+      req.body.title,
+      req.body.content,
+      req.session.userid,
+      req.file.filename,
+      "",
+    ]
   );
-  res.redirect("/");
+  res.redirect("/feed");
 });
 
 /* Wichtig! Diese Zeilen müssen immer am Schluss der Website stehen! */
