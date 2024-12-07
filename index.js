@@ -35,6 +35,10 @@ app.get("/post/:id", async function (req, res) {
 });
 
 app.get("/user", async function (req, res) {
+  if (!req.session.userid) {
+    res.redirect("/login");
+    return;
+  }
   res.render("user", { user: { username: req.session.username } });
 });
 
